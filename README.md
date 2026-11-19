@@ -12,6 +12,8 @@ CAT PTT for the IC-7100 works. The BOOT button keys PTT manually (press and hold
 
 ## Wiring
 
+![Wiring: GPIO27 → 330 Ω → PC818 → radio PTT, GPIO26 / GPIO25 → red / green LED, BOOT = manual PTT](docs/images/wiring_en.png)
+
 | ESP32 | Part | Note |
 |---|---|---|
 | GPIO27 | 330 Ω → PC818 pin 1 (anode); pin 2 (cathode) → GND | PTT output |
@@ -28,6 +30,33 @@ The firmware answers the commands needed for PTT: read frequency (`03`), read mo
 transceive / PTT command `1C 00 01` / `1C 00 00` with an OK reply (`FB`). It reports a fixed frequency
 (14.074 MHz USB) so that programs which poll the radio are satisfied.
 
+## How keying works
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant P as PC program
+    participant E as ESP32 trigger
+    participant R as Radio
+    alt Direwolf — DTR line
+        P->>E: DTR on (USB COM port → GPIO0)
+        E->>R: PC818 closes PTT, red LED on
+        P-->>R: packet audio through the sound card
+        P->>E: DTR off
+        E->>R: PTT released, green LED on
+    else UZ7HO Soundmodem — CAT (Icom CI-V, IC-7100)
+        P->>E: FE FE 88 E0 1C 00 01 FD (transmit)
+        E-->>P: FE FE E0 88 FB FD (OK)
+        E->>R: PC818 closes PTT, red LED on
+        P-->>R: packet audio through the sound card
+        P->>E: FE FE 88 E0 1C 00 00 FD (receive)
+        E->>R: PTT released, green LED on
+    end
+```
+
+On the DTR path the firmware sees the line through GPIO0 exactly like a pressed BOOT button (25 ms debounce),
+so the radio keys within a few tens of milliseconds — far below Direwolf's default TXDELAY.
+
 ## Program settings (tested)
 
 - **UZ7HO Soundmodem 1.14** — CAT PTT, `Radio=2` in `ptt.ini` (= IC-7100, address 0x88), 9600 bps — works
@@ -42,7 +71,7 @@ transceive / PTT command `1C 00 01` / `1C 00 00` with an OK reply (`FB`). It rep
 
 ## Part of the SP9TKN APRS station
 
-Four projects work together as one APRS station on a Windows PC with a Yaesu FT-290R II (2 m). Each part does one job and also works on its own.
+Five projects work together as one APRS station on a Windows PC with a Yaesu FT-290R II (2 m). Each part does one job and also works on its own.
 
 | Project | Role |
 |---|---|
@@ -50,7 +79,10 @@ Four projects work together as one APRS station on a Windows PC with a Yaesu FT-
 | [Audio PTT](https://github.com/SP9TKN/audio-ptt) | radio audio as a UZ7HO-style waterfall + PTT lamps, read-only |
 | [APRSBox for Windows](https://github.com/SP9TKN/APRSBox) | the APRS application: iGate, digipeater, beacons, messages, map (Windows port of SQ9MDD's APRSBox) |
 | [CYD-Monitor](https://github.com/SP9TKN/cyd-monitor) | 2.8" ESP32 display as a wireless monitor: the station screen over Wi-Fi, with touch |
-| [Direwolf](https://github.com/wb2osz/direwolf) (WB2OSZ) | sound-card modem / TNC (AFSK 1200), used unchanged |
+| [Direwolf — SP9TKN package](https://github.com/SP9TKN/direwolf) | sound-card modem / TNC (AFSK 1200): WB2OSZ's Direwolf 1.8.1 with a dark console window and the station configuration (PTT on DTR, KISS TCP for APRSBox) |
+
+![The station at work: Audio PTT (top left), Direwolf (bottom left) and APRSBox with the map. Coordinates of other stations in the Direwolf window are blurred.](docs/images/aprs-station-desktop.jpg)
+*The station at work: Audio PTT (top left), Direwolf (bottom left) and APRSBox with the map. Coordinates of other stations in the Direwolf window are blurred.*
 
 ```mermaid
 flowchart LR

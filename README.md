@@ -57,22 +57,25 @@ flowchart LR
     RIG["Yaesu FT-290R II<br/>2 m transceiver"]
     SC["USB sound card"]
     PTT["ESP32 PTT trigger<br/>PC818 optocoupler"]
-    CYD["CYD-Monitor panel<br/>2.8 in, Wi-Fi"]
     NET(("APRS-IS"))
+    CYD["CYD-Monitor panel<br/>2.8 in, Wi-Fi, touch"]
     subgraph PC["Windows PC"]
         DW["Direwolf<br/>AFSK 1200 modem"]
         AB["APRSBox for Windows"]
         AP["Audio PTT"]
+        SRV["CYD-Monitor server"]
     end
     RIG <-->|"audio"| SC
     SC <--> DW
     DW <-->|"KISS TCP"| AB
     AB <--> NET
-    DW -->|"DTR on the USB COM port"| PTT
+    DW -->|"DTR"| PTT
     PTT -->|"PTT, isolated"| RIG
     SC -.->|"same audio"| AP
     DW -.->|"DTR state, read-only"| AP
-    PC -.->|"desktop over Wi-Fi"| CYD
+    AB -.->|"screen"| SRV
+    AP -.->|"screen"| SRV
+    SRV -->|"Wi-Fi"| CYD
 ```
 
 **How it works**

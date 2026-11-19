@@ -56,22 +56,25 @@ flowchart LR
     RIG["Yaesu FT-290R II<br/>radio 2 m"]
     SC["karta dźwiękowa USB"]
     PTT["wyzwalacz PTT ESP32<br/>transoptor PC818"]
-    CYD["panel CYD-Monitor<br/>2,8 cala, WiFi"]
     NET(("APRS-IS"))
+    CYD["panel CYD-Monitor<br/>2,8 cala, WiFi, dotyk"]
     subgraph PC["komputer z Windows"]
         DW["Direwolf<br/>modem AFSK 1200"]
         AB["APRSBox dla Windows"]
         AP["Audio PTT"]
+        SRV["serwer CYD-Monitor"]
     end
     RIG <-->|"dźwięk"| SC
     SC <--> DW
     DW <-->|"KISS TCP"| AB
     AB <--> NET
-    DW -->|"DTR na porcie COM USB"| PTT
+    DW -->|"DTR"| PTT
     PTT -->|"PTT, z separacją"| RIG
     SC -.->|"ten sam dźwięk"| AP
     DW -.->|"stan DTR, tylko odczyt"| AP
-    PC -.->|"pulpit przez WiFi"| CYD
+    AB -.->|"ekran"| SRV
+    AP -.->|"ekran"| SRV
+    SRV -->|"WiFi"| CYD
 ```
 
 **Jak to działa**

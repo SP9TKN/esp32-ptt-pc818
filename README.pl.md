@@ -74,7 +74,7 @@ Pięć projektów działa razem jako jedna stacja APRS na komputerze z Windows i
 
 | Projekt | Rola |
 |---|---|
-| [Wyzwalacz PTT ESP32](https://github.com/SP9TKN/esp32-ptt-pc818) **← to repozytorium** | kluczuje PTT radia przez transoptor PC818 (separacja galwaniczna), diody TX/RX |
+| [Wyzwalacz PTT ESP32](https://github.com/SP9TKN/esp32-ptt-pc818) **← tu jesteś** | kluczuje PTT radia przez transoptor PC818 (separacja galwaniczna), diody TX/RX |
 | [Audio PTT](https://github.com/SP9TKN/audio-ptt) | dźwięk z radia jako wodospad jak w UZ7HO + lampki PTT, tylko odczyt |
 | [APRSBox dla Windows](https://github.com/SP9TKN/APRSBox) | program APRS: iGate, digipeater, beacony, wiadomości, mapa (port APRSBox SQ9MDD na Windows) |
 | [CYD-Monitor](https://github.com/SP9TKN/cyd-monitor) | wyświetlacz ESP32 2,8" jako monitor bezprzewodowy: ekran stacji przez WiFi, z dotykiem |

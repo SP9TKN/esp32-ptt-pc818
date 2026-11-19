@@ -75,7 +75,7 @@ Five projects work together as one APRS station on a Windows PC with a Yaesu FT-
 
 | Project | Role |
 |---|---|
-| [ESP32 PTT trigger](https://github.com/SP9TKN/esp32-ptt-pc818) **← this repository** | keys the radio's PTT through a PC818 optocoupler (galvanic isolation), red/green TX/RX LEDs |
+| [ESP32 PTT trigger](https://github.com/SP9TKN/esp32-ptt-pc818) **← you are here** | keys the radio's PTT through a PC818 optocoupler (galvanic isolation), red/green TX/RX LEDs |
 | [Audio PTT](https://github.com/SP9TKN/audio-ptt) | radio audio as a UZ7HO-style waterfall + PTT lamps, read-only |
 | [APRSBox for Windows](https://github.com/SP9TKN/APRSBox) | the APRS application: iGate, digipeater, beacons, messages, map (Windows port of SQ9MDD's APRSBox) |
 | [CYD-Monitor](https://github.com/SP9TKN/cyd-monitor) | 2.8" ESP32 display as a wireless monitor: the station screen over Wi-Fi, with touch |

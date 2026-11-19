@@ -66,6 +66,31 @@ więc radio kluczuje się w kilkadziesiąt milisekund — dużo szybciej niż do
   Przed startem Direwolfa uruchom `mode COMx dtr=off rts=off` — sterownik CH340 pamięta stan linii z poprzedniej
   sesji portu, a pozostawiony RTS trzyma ESP32 w resecie. Nigdy `PTT COMx RTS` (reset) ani `-DTR` (ciągłe nadawanie).
 
+## Wariant na T-Display
+
+<p align="center">
+  <img src="docs/images/t-display-rx.png" width="45%" alt="T-Display w RX: biały napis RX na zielonym ekranie">
+  <img src="docs/images/t-display-tx.png" width="45%" alt="T-Display w TX: biały napis TX na czerwonym ekranie">
+</p>
+
+Ten sam wyzwalacz działa też na **LilyGO (TTGO) T-Display**: ESP32 z ekranem ST7789 1,14" (240×135). Zamiast dwóch
+diod cały ekran robi się **zielony z napisem RX** albo **czerwony z TX**, więc widać go z drugiego końca pokoju.
+Obrazy powyżej narysowano kodem rysującym samego firmware'u i danymi czcionki TFT_eSPI, piksel w piksel
+(powiększenie ×2).
+
+| T-Display | Funkcja |
+|---|---|
+| GPIO27 | 330 Ω → transoptor PC817 → PTT radia |
+| GPIO0 (przycisk BOOT) | ręczne PTT (wciśnij i trzymaj) |
+| GPIO35 (drugi przycisk) | podświetlenie: 7 stopni od pełnego do wyłączonego, zapamiętywane we flashu |
+
+Emulacja CI-V jest taka sama jak w DevKicie (IC-7100, adres 0x88, 9600 bit/s). GPIO0 jest czytany dokładnie tak
+jak w DevKicie, a płytka ma ten sam układ automatycznego resetu, więc ścieżka DTR powinna działać tak samo.
+
+Źródła są w [`t-display/`](t-display). Wariant jest budowany na [pioarduino](https://github.com/pioarduino/platform-espressif32)
+(Arduino ESP32 3.3.8), przypiętym w jego `platformio.ini`: `cd t-display`, potem `pio run -t upload --upload-port COMx`.
+PlatformIO trzeba uruchomić z PowerShella albo VS Code, bo pioarduino nie buduje w Git Bash / MSYS.
+
 <!-- ecosystem:aprs:start -->
 
 ## Część stacji APRS SP9TKN
@@ -130,9 +155,10 @@ flowchart LR
 
 ## Budowanie
 
-[PlatformIO](https://platformio.org/): `pio run -t upload --upload-port COMx`. Gotowy obraz jest w
-**[Releases](../../releases)** — wgrywany od adresu **0x0**:
-`python -m esptool --port COMx write_flash 0x0 <plik>.bin`.
+[PlatformIO](https://platformio.org/): `pio run -t upload --upload-port COMx`. Gotowe obrazy są w
+**[Releases](../../releases)** — wgrywane od adresu **0x0**:
+`python -m esptool --port COMx write_flash 0x0 <plik>.bin` (`esp32-ptt-pc818_…` dla DevKita,
+`esp32-ptt-t-display_…` dla [T-Display](#wariant-na-t-display)).
 
 ## Licencja
 

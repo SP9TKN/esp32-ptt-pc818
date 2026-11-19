@@ -67,6 +67,30 @@ so the radio keys within a few tens of milliseconds — far below Direwolf's def
   previous session, and a left-over RTS keeps the ESP32 in reset. Never use `PTT COMx RTS` (reset) or
   `-DTR` (continuous transmit).
 
+## T-Display variant
+
+<p align="center">
+  <img src="docs/images/t-display-rx.png" width="45%" alt="T-Display in RX: white RX on a green screen">
+  <img src="docs/images/t-display-tx.png" width="45%" alt="T-Display in TX: white TX on a red screen">
+</p>
+
+The same trigger also runs on a **LilyGO (TTGO) T-Display**: an ESP32 with a 1.14" ST7789 screen (240×135). Instead
+of two LEDs, the whole screen turns **green with RX** or **red with TX**, so you can read it from across the room. The
+images above were rendered from the firmware's own drawing code and the TFT_eSPI font data, pixel for pixel (shown ×2).
+
+| T-Display | Function |
+|---|---|
+| GPIO27 | 330 Ω → PC817 optocoupler → radio PTT |
+| GPIO0 (BOOT button) | manual PTT (press and hold) |
+| GPIO35 (second button) | backlight: 7 steps from full to off, kept in flash |
+
+The CI-V emulation is the same as on the DevKit (IC-7100, address 0x88, 9600 bps). GPIO0 is read exactly as on the
+DevKit and the board has the same auto-reset circuit, so the DTR path should work the same way.
+
+The source is in [`t-display/`](t-display). It is built on [pioarduino](https://github.com/pioarduino/platform-espressif32)
+(Arduino ESP32 3.3.8), pinned in its `platformio.ini`: `cd t-display`, then `pio run -t upload --upload-port COMx`.
+Run PlatformIO from PowerShell or VS Code, because pioarduino refuses to build in Git Bash / MSYS shells.
+
 <!-- ecosystem:aprs:start -->
 
 ## Part of the SP9TKN APRS station
@@ -132,9 +156,10 @@ flowchart LR
 
 ## Building
 
-[PlatformIO](https://platformio.org/): `pio run -t upload --upload-port COMx`. A ready image is in
-**[Releases](../../releases)** — write it at address **0x0**:
-`python -m esptool --port COMx write_flash 0x0 <file>.bin`.
+[PlatformIO](https://platformio.org/): `pio run -t upload --upload-port COMx`. Ready images are in
+**[Releases](../../releases)** — write them at address **0x0**:
+`python -m esptool --port COMx write_flash 0x0 <file>.bin` (`esp32-ptt-pc818_…` for the DevKit,
+`esp32-ptt-t-display_…` for the [T-Display](#t-display-variant)).
 
 ## License
 
